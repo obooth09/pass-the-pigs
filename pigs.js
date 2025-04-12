@@ -1,8 +1,8 @@
 let currentPlayer = 0
-let score = 0
 function handleClick(id) {
     console.log(id)
     if (id.includes('Pass')) {
+        updateTotalScore()
         endTurn()
         changePlayer()
 
@@ -13,14 +13,17 @@ function handleClick(id) {
     }
 }
 function endTurn() {
+    
     let container = document.getElementById("player" + currentPlayer)
     container.classList.add('w3-light-gray')
     container.classList.remove('w3-dark-gray')
-    currentPlayer = currentPlayer + 1
-    score = score
     if (currentPlayer == 4) {
         currentPlayer = 0
     }
+    currentPlayer = currentPlayer + 1
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + "0"
+
+    
 }
 function changePlayer() {
     let container = document.getElementById("player" + currentPlayer)
@@ -39,7 +42,6 @@ let trotter = 0.963
 let snouter = 0.993
 let leaningJowler = 1
 
-let pigOut
 let pig1Roll
 let pig2Roll
 
@@ -78,14 +80,75 @@ let totalScore = 0
 // if score returns 0, pigout
 // assign scores
 function calculateScore(){
-    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'no dot' && pig1Roll == 'dot')){
-        totalScore = 0
-        return 'PIG OUT'
+    checkDoubles()
+    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'dot' && pig1Roll == 'no dot')){
+        pigOut()
+    }
+    
+    
+    if (pig1Roll == 'razorback' || pig1Roll == 'trotter'){
+        handScore = handScore + 5
+    } else if (pig1Roll == 'snouter'){
+        handScore = handScore + 10
+    } else if (pig1Roll == 'leaning jowler'){
+        handScore = handScore + 15
+    } else if (pig1Roll == "dot" || pig1Roll == "noDot"){
+        handScore = handScore + 0
     }
 
+    if (pig2Roll == 'razorback' || pig2Roll == 'trotter'){
+        handScore = handScore + 5
+    } else if (pig2Roll == 'snouter'){
+        handScore = handScore + 10
+    } else if (pig2Roll == 'leaning jowler'){
+        handScore = handScore + 15
+    } else if (pig2Roll == "dot" || pig2Roll == "noDot"){
+        handScore = handScore + 0
+    }
+    // if ((pig1Roll == 'razorback' && pig2Roll == 'razorback')){
+    //     handScore = handScore + 20
+    // } else if (pig1Roll == )
+    // }
+    // if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'no dot' && pig1Roll == 'dot')){
+    //     pigOut()
+        
+    // } else if (((pig1Roll == "dot" && pig2Roll == "dot") || (pig1Roll == "no dot" && pig2Roll == "no dot"))){
+    //     handScore = handScore + 1 
+
+    // } else if (pig1Roll == "razorback" || pig1Roll == "trotter" || pig2Roll == "trotter" || pig2Roll == "razorback"){
+    //     handScore = handScore + 5
+    // } else if (pig1Roll == 'snouter' || pig2Roll == 'snouter'){
+    //     handScore = handScore + 10
+    // } else if (pig1Roll = "leaning jowler" || pig2Roll == "leaning jowler"){
+    //     handScore = handScore + 15
+    // }
+
+    
+    
     document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
+    
+    
 }
 
 function updateTotalScore (){
     totalScore = totalScore + handScore
+    document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + handScore
 }
+
+function pigOut (){
+    handScore = 0
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + "PIG OUT!"
+    endTurn()
+    changePlayer()
+}
+
+function checkDoubles(){
+    if ((pig1Roll == 'dot' && pig2Roll == 'dot') || (pig1Roll == 'no dot' && pig2Roll == 'no dot')){
+        handScore = handScore + 1
+    } else if ((pig1Roll == 'razorback' && pig2Roll == 'razorback') || (pig1Roll == 'trotter' && pig2Roll == 'trotter')){
+        handScore = handScore + 20
+    } else if ((pig1Roll == 'leaning jowler' && pig2Roll == 'leaning jowler')){
+        handScore = handScore + 60
+    }
+}
+   
