@@ -1,10 +1,19 @@
 let currentPlayer = 0
+disableButtons()
+enableButtons()
+playerScores = [0, 0, 0, 0]
 function handleClick(id) {
     console.log(id)
     if (id.includes('Pass')) {
+
         updateTotalScore()
         endTurn()
         changePlayer()
+        disableButtons()
+        enableButtons()
+
+
+
 
         console.log('passed')
     } else if (id.includes('Roll')) {
@@ -13,17 +22,18 @@ function handleClick(id) {
     }
 }
 function endTurn() {
-    
+
     let container = document.getElementById("player" + currentPlayer)
     container.classList.add('w3-light-gray')
     container.classList.remove('w3-dark-gray')
+    currentPlayer = currentPlayer + 1
     if (currentPlayer == 4) {
+        handScore = 0
         currentPlayer = 0
     }
-    currentPlayer = currentPlayer + 1
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + "0"
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
 
-    
+
 }
 function changePlayer() {
     let container = document.getElementById("player" + currentPlayer)
@@ -64,91 +74,98 @@ function rollPig() {
         return 'no dot'
     } else if (pigRolled <= razorback) {
         return 'razorback'
-    } else if (pigRolled <= trotter){
+    } else if (pigRolled <= trotter) {
         return 'trotter'
-    }else if (pigRolled <= snouter) {
-        return'snouter'
+    } else if (pigRolled <= snouter) {
+        return 'snouter'
     } else if (pigRolled <= leaningJowler) {
         return 'leaning jowler'
     }
 
-    
-}      
+
+}
 let handScore = 0
-let totalScore = 0
 
 // if score returns 0, pigout
 // assign scores
-function calculateScore(){
+function calculateScore() {
     checkDoubles()
-    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'dot' && pig1Roll == 'no dot')){
+    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'dot' && pig1Roll == 'no dot')) {
         pigOut()
     }
-    
-    
-    if (pig1Roll == 'razorback' || pig1Roll == 'trotter'){
+
+
+    if (pig1Roll == 'razorback' || pig1Roll == 'trotter') {
         handScore = handScore + 5
-    } else if (pig1Roll == 'snouter'){
+    } else if (pig1Roll == 'snouter') {
         handScore = handScore + 10
-    } else if (pig1Roll == 'leaning jowler'){
+    } else if (pig1Roll == 'leaning jowler') {
         handScore = handScore + 15
-    } else if (pig1Roll == "dot" || pig1Roll == "noDot"){
+    } else if (pig1Roll == "dot" || pig1Roll == "noDot") {
         handScore = handScore + 0
     }
 
-    if (pig2Roll == 'razorback' || pig2Roll == 'trotter'){
+    if (pig2Roll == 'razorback' || pig2Roll == 'trotter') {
         handScore = handScore + 5
-    } else if (pig2Roll == 'snouter'){
+    } else if (pig2Roll == 'snouter') {
         handScore = handScore + 10
-    } else if (pig2Roll == 'leaning jowler'){
+    } else if (pig2Roll == 'leaning jowler') {
         handScore = handScore + 15
-    } else if (pig2Roll == "dot" || pig2Roll == "noDot"){
+    } else if (pig2Roll == "dot" || pig2Roll == "noDot") {
         handScore = handScore + 0
     }
-    // if ((pig1Roll == 'razorback' && pig2Roll == 'razorback')){
-    //     handScore = handScore + 20
-    // } else if (pig1Roll == )
-    // }
-    // if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'no dot' && pig1Roll == 'dot')){
-    //     pigOut()
-        
-    // } else if (((pig1Roll == "dot" && pig2Roll == "dot") || (pig1Roll == "no dot" && pig2Roll == "no dot"))){
-    //     handScore = handScore + 1 
 
-    // } else if (pig1Roll == "razorback" || pig1Roll == "trotter" || pig2Roll == "trotter" || pig2Roll == "razorback"){
-    //     handScore = handScore + 5
-    // } else if (pig1Roll == 'snouter' || pig2Roll == 'snouter'){
-    //     handScore = handScore + 10
-    // } else if (pig1Roll = "leaning jowler" || pig2Roll == "leaning jowler"){
-    //     handScore = handScore + 15
-    // }
-
-    
-    
     document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
-    
-    
+
+
 }
 
-function updateTotalScore (){
-    totalScore = totalScore + handScore
+function updateTotalScore() {
+    playerScores[currentPlayer] += handScore
+    console.log(playerScores)
     document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + handScore
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Total Score: " + (handScore - handScore)
+    handScore = 0
 }
 
-function pigOut (){
+function pigOut() {
     handScore = 0
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + "PIG OUT!"
+    console.log('player' + currentPlayer + 'piggedOut')
+    console.log(document.getElementById("player" + currentPlayer + "HandScore"))
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: PIG OUT!"
+    updateTotalScore()
     endTurn()
     changePlayer()
+    disableButtons()
+    enableButtons()
 }
 
-function checkDoubles(){
-    if ((pig1Roll == 'dot' && pig2Roll == 'dot') || (pig1Roll == 'no dot' && pig2Roll == 'no dot')){
+function checkDoubles() {
+    if ((pig1Roll == 'dot' && pig2Roll == 'dot') || (pig1Roll == 'no dot' && pig2Roll == 'no dot')) {
         handScore = handScore + 1
-    } else if ((pig1Roll == 'razorback' && pig2Roll == 'razorback') || (pig1Roll == 'trotter' && pig2Roll == 'trotter')){
+    } else if ((pig1Roll == 'razorback' && pig2Roll == 'razorback') || (pig1Roll == 'trotter' && pig2Roll == 'trotter')) {
         handScore = handScore + 20
-    } else if ((pig1Roll == 'leaning jowler' && pig2Roll == 'leaning jowler')){
+    } else if ((pig1Roll == 'leaning jowler' && pig2Roll == 'leaning jowler')) {
         handScore = handScore + 60
     }
 }
-   
+
+function endGame() {
+
+}
+
+function disableButtons() {
+    document.getElementById("player0RollButton").disabled = true
+    document.getElementById("player0PassButton").disabled = true
+    document.getElementById("player1RollButton").disabled = true
+    document.getElementById("player1PassButton").disabled = true
+    document.getElementById("player2RollButton").disabled = true
+    document.getElementById("player2PassButton").disabled = true
+    document.getElementById("player3RollButton").disabled = true
+    document.getElementById("player3PassButton").disabled = true
+}
+
+function enableButtons() {
+    document.getElementById("player" + currentPlayer + "RollButton").disabled = false
+    document.getElementById("player" + currentPlayer + "PassButton").disabled = false
+}
