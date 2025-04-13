@@ -1,57 +1,11 @@
+//define global variables
 let currentPlayer = 0
 let handScore = 0
-disableButtons()
-enableButtons()
-playerScores = [0, 0, 0, 0]
-function handleClick(id) {
-    console.log(id)
-    if (id.includes('Pass')) {
+let playerScores = [0, 0, 0, 0]
 
-        updateTotalScore()
-        endTurn()
-        changePlayer()
-        disableButtons()
-        enableButtons()
-
-
-
-
-        console.log('passed')
-    } else if (id.includes('Roll')) {
-        whenRolled()
-        calculateScore()
-        document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
-
-    } else if (id.includes('replayButton')){
-        console.log('replay button was clicked')
-        //resetGame()
-        location.reload()
-    }
-}
-function endTurn() {
-    handScore = 0
-    let container = document.getElementById("player" + currentPlayer)
-    container.classList.add('w3-light-gray')
-    container.classList.remove('w3-dark-gray')
-    currentPlayer = currentPlayer + 1
-    if (currentPlayer == 4) {
-        //handScore = 0
-        currentPlayer = 0
-    }
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
-
-
-}
-function changePlayer() {
-    let container = document.getElementById("player" + currentPlayer)
-    container.classList.add('w3-dark-gray')
-    container.classList.remove('w3-light-gray')
-
-
-}
-
-
-//set up for roll button
+//set up probability for roll button
+let pig1Roll
+let pig2Roll
 let dot = 0.349
 let noDot = 0.651
 let razorback = 0.875
@@ -59,14 +13,39 @@ let trotter = 0.963
 let snouter = 0.993
 let leaningJowler = 1
 
-let pig1Roll
-let pig2Roll
+//setup buttons/layout
+disableButtons()
+enableButtons()
 
+//onclick functions
+function handleClick(id) {
+    if (id.includes('Pass')) {
+        handlePass()
+    } else if (id.includes('Roll')) {
+        handleRoll()
+    } else if (id == ('replayButton')) {
+        location.reload()
+    }
+}
 
+//defining all the functions within the onclick ones
+function handlePass() {
+    updateTotalScore()
+    endTurn()
+    changePlayer()
+    disableButtons()
+    enableButtons()
+}
+
+function handleRoll() {
+    assignPigs()
+    calculateScore()
+    checkIfWin()
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
+}
 
 function rollPig() {
     let pigRolled = Math.random()
-    console.log(pigRolled)
     if (pigRolled <= dot) {
         return 'dot'
     } else if (pigRolled <= noDot) {
@@ -80,27 +59,23 @@ function rollPig() {
     } else if (pigRolled <= leaningJowler) {
         return 'leaning jowler'
     }
-
-
 }
+
 //return values for pig
-function whenRolled() {
-    currentPlayer = currentPlayer
+function assignPigs() {
     pig1Roll = rollPig()
     pig2Roll = rollPig()
-    console.log(pig1Roll + " and " + pig2Roll)
     document.getElementById("player" + currentPlayer + "Pig1").innerHTML = pig1Roll
     document.getElementById("player" + currentPlayer + "Pig2").innerHTML = pig2Roll
 }
 
-
-// if score returns 0, pigout
-// assign scores
+// assign scores to rolls
 function calculateScore() {
     checkDoubles()
+    // when no doubles, check individual pigs (this is pig 1)
     if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig1Roll == 'no dot' && pig2Roll == 'dot')) {
         pigOut()
-    }else if (pig1Roll == 'razorback' || pig1Roll == 'trotter') {
+    } else if (pig1Roll == 'razorback' || pig1Roll == 'trotter') {
         handScore = handScore + 5
     } else if (pig1Roll == 'snouter') {
         handScore = handScore + 10
@@ -109,7 +84,7 @@ function calculateScore() {
     } else if (pig1Roll == "dot" || pig1Roll == "noDot") {
         handScore = handScore + 0
     }
-
+    // this is pig 2
     if (pig2Roll == 'razorback' || pig2Roll == 'trotter') {
         handScore = handScore + 5
     } else if (pig2Roll == 'snouter') {
@@ -119,43 +94,12 @@ function calculateScore() {
     } else if (pig2Roll == "dot" || pig2Roll == "noDot") {
         handScore = handScore + 0
     }
-    
+}
 
+function checkIfWin() {
     if ((playerScores[currentPlayer] + handScore) >= 100) {
         endGame()
     }
-
-
-}
-
-
-
-
-
-function pigOut() {
-    handScore = "PIG OUT!"
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore 
-    
-    console.log('hand score is ' + handScore)
-    console.log('player ' + currentPlayer + ' pigged out')
-    
-    updateTotalScore()
-    endTurn()
-    changePlayer()
-    disableButtons()
-    enableButtons()
-}
-function updateTotalScore() {
-    if (handScore == "PIG OUT!"){
-        handScore = 0
-        document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + ("YOU PIGGED OUT!")
-    }else {
-        document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + (handScore - handScore)
-    }
-    playerScores[currentPlayer] = playerScores[currentPlayer] + handScore
-    console.log(playerScores)
-    document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + playerScores[currentPlayer]
-    
 }
 
 function checkDoubles() {
@@ -168,17 +112,61 @@ function checkDoubles() {
     }
 }
 
+function pigOut() {
+    handScore = "PIG OUT!"
+    //skip turn
+    updateTotalScore()
+    endTurn()
+    changePlayer()
+    disableButtons()
+    enableButtons()
+}
+
+// for when the pass button is clicked
+function updateTotalScore() {
+    //display you pigged out if you did versus displaying your actual score
+    if (handScore == "PIG OUT!") {
+        handScore = 0
+        document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + ("YOU PIGGED OUT!")
+    } else {
+        document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + (handScore - handScore)
+    }
+    //update internally
+    playerScores[currentPlayer] = playerScores[currentPlayer] + handScore
+    document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + playerScores[currentPlayer]
+}
+
+function endTurn() {
+    handScore = 0
+    //change visuals to show your turn has ended
+    let cardColor = document.getElementById("player" + currentPlayer)
+    cardColor.classList.add('w3-light-gray')
+    cardColor.classList.remove('w3-dark-gray')
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
+}
+
+function changePlayer() {
+    currentPlayer++
+    if (currentPlayer == 4) {
+        currentPlayer = 0
+    }
+    //set colors for new player
+    let cardColor = document.getElementById("player" + currentPlayer)
+    cardColor.classList.add('w3-dark-gray')
+    cardColor.classList.remove('w3-light-gray')
+}
+
 function endGame() {
-    console.log('GAME HAS ENDED')
     disableButtons()
     //set elements to look like they won
-    let container = document.getElementById("player" + currentPlayer)
-    container.classList.add('w3-yellow')
-    container.classList.remove('w3-dark-gray')
+    let cardColor = document.getElementById("player" + currentPlayer)
+    cardColor.classList.add('w3-yellow')
+    cardColor.classList.remove('w3-dark-gray')
     //show replay button
     document.getElementById("replay").classList.remove("w3-hide")
 }
 
+// button functions
 function disableButtons() {
     document.getElementById("player0RollButton").disabled = true
     document.getElementById("player0PassButton").disabled = true
@@ -194,23 +182,3 @@ function enableButtons() {
     document.getElementById("player" + currentPlayer + "RollButton").disabled = false
     document.getElementById("player" + currentPlayer + "PassButton").disabled = false
 }
-
-// function resetGame() {
-//     location.reload()
-//     // //hide replay button
-//     // document.getElementById("replay").classList.add("w3-hide")
-//     // // set all values from game back to 0
-//     // handScore = 0
-//     // playerScores = [0, 0, 0, 0]
-//     // console.log('hand score = ' + handScore)
-//     // console.log('player scores' + playerScores)
-//     // // display those values on sceen
-    
-//     // //document.getElementById('player0')
-//     // // change colors of boxes to original
-//     // let container = document.getElementById("player" + currentPlayer)
-//     // container.classList.add('w3-light-gray')
-//     // container.classList.remove('w3-yellow')
-//     // document.getElementById("player0").classList.add('w3-dark-gray')
-
-// }
