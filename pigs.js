@@ -90,7 +90,7 @@ let handScore = 0
 // assign scores
 function calculateScore() {
     checkDoubles()
-    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig2Roll == 'dot' && pig1Roll == 'no dot')) {
+    if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig1Roll == 'no dot' && pig2Roll == 'dot')) {
         pigOut()
     }
 
@@ -114,8 +114,11 @@ function calculateScore() {
     } else if (pig2Roll == "dot" || pig2Roll == "noDot") {
         handScore = handScore + 0
     }
-
     document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
+
+    if ((playerScores[currentPlayer] + handScore) >= 10){
+        endGame()
+    }
 
 
 }
@@ -123,14 +126,14 @@ function calculateScore() {
 function updateTotalScore() {
     playerScores[currentPlayer] += handScore
     console.log(playerScores)
-    document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + handScore
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Total Score: " + (handScore - handScore)
+    document.getElementById("player" + currentPlayer + "TotalScore").innerHTML = "Total Score: " + playerScores[currentPlayer]
+    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + (handScore - handScore)
     handScore = 0
 }
 
 function pigOut() {
     handScore = 0
-    console.log('player' + currentPlayer + 'piggedOut')
+    console.log('player' + currentPlayer + 'pigged out')
     console.log(document.getElementById("player" + currentPlayer + "HandScore"))
     document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: PIG OUT!"
     updateTotalScore()
@@ -151,6 +154,15 @@ function checkDoubles() {
 }
 
 function endGame() {
+    console.log('GAME HAS ENDED')
+    disableButtons()
+    //set elements to look like they won
+    let container = document.getElementById("player" + currentPlayer)
+    container.classList.add('w3-yellow')
+    container.classList.remove('w3-dark-gray')
+    // //make replay button appear
+    //document.getElementById("replayButton").style.display = 'none'
+
 
 }
 
