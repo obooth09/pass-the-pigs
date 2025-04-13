@@ -73,9 +73,10 @@ function assignPigs() {
 function calculateScore() {
     checkDoubles()
     // when no doubles, check individual pigs (this is pig 1)
+    checkDoubles()
     if ((pig1Roll == "dot" && pig2Roll == "no dot") || (pig1Roll == 'no dot' && pig2Roll == 'dot')) {
         pigOut()
-    } else if (pig1Roll == 'razorback' || pig1Roll == 'trotter') {
+    }else if (pig1Roll == 'razorback' || pig1Roll == 'trotter') {
         handScore = handScore + 5
     } else if (pig1Roll == 'snouter') {
         handScore = handScore + 10
@@ -84,7 +85,7 @@ function calculateScore() {
     } else if (pig1Roll == "dot" || pig1Roll == "noDot") {
         handScore = handScore + 0
     }
-    // this is pig 2
+    //pig 2
     if (pig2Roll == 'razorback' || pig2Roll == 'trotter') {
         handScore = handScore + 5
     } else if (pig2Roll == 'snouter') {
@@ -125,7 +126,7 @@ function pigOut() {
 // for when the pass button is clicked
 function updateTotalScore() {
     //display you pigged out if you did versus displaying your actual score
-    if (handScore == "PIG OUT!") {
+    if (handScore == "PIG OUT!"){
         handScore = 0
         document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + ("YOU PIGGED OUT!")
     } else {
@@ -142,7 +143,6 @@ function endTurn() {
     let cardColor = document.getElementById("player" + currentPlayer)
     cardColor.classList.add('w3-light-gray')
     cardColor.classList.remove('w3-dark-gray')
-    document.getElementById("player" + currentPlayer + "HandScore").innerHTML = "Score: " + handScore
 }
 
 function changePlayer() {
