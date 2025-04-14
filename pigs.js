@@ -99,6 +99,8 @@ function calculateScore() {
 
 function checkIfWin() {
     if ((playerScores[currentPlayer] + handScore) >= 100) {
+        const audio = new Audio('sounds/crowd-clapping-4-236780.mp3')
+        audio.play()
         endGame()
     }
 }
@@ -116,6 +118,7 @@ function checkDoubles() {
 function pigOut() {
     handScore = "PIG OUT!"
     //skip turn
+    playOink() 
     updateTotalScore()
     endTurn()
     changePlayer()
@@ -181,4 +184,9 @@ function disableButtons() {
 function enableButtons() {
     document.getElementById("player" + currentPlayer + "RollButton").disabled = false
     document.getElementById("player" + currentPlayer + "PassButton").disabled = false
+}
+
+function playOink(){
+    const audio = new Audio('sounds/pig-oink-47167.mp3')
+    audio.play()
 }
